@@ -1,19 +1,19 @@
-import socket  
+import socket
 
-s = socket.socket()   
-s.bind(("localhost", 9999))  
-s.listen(1)  
+s = socket.socket()
+s.bind(("localhost", 9999))
+s.listen(1)
 
-sc, addr = s.accept()  
+sc, addr = s.accept()
 
-while True:  
-  recibido = sc.recv(1024)  
-  if recibido == "quit":  
-    break        
-  print "Message received:", recibido  
-  sc.send(recibido)  
+while True:
+    recibido = sc.recv(1024)
+    if recibido == "quit":
+        break
+    print "Message received:", recibido
+    sc.send(recibido)
 
-print "bye..."  
+print "bye..."
 
-sc.close()  
-s.close()  
+sc.close()
+s.close()
