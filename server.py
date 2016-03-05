@@ -4,7 +4,7 @@ import re
 
 class Server():
     """
-    Class for handle the server side
+    Class for handling the server side
     """
     RECV_BUFFER = 4096 # Advisable to keep it as an exponent of 2
     PORT = 5000

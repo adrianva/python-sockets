@@ -7,14 +7,14 @@ def prompt() :
 
 class Client(object):
     """
-    Class for handle the Client side
+    Class for handling the Client side
     """
 
     RECV_BUFFER = 4096 # Advisable to keep it as an exponent of 2
     
     def __init__(self, host=None, port=None):
         """
-        Constructor of Client
+        Initialize the client
 
         :param host: ip of he Server
         :type user: string
@@ -48,7 +48,7 @@ class Client(object):
 
     def ready(self):
         """
-        Execute the core functionality. it checks if the client must send or recieve data
+        Execute the core functionality. Send or receive the message to/from the server
         """
 
         # list of the available sockets
@@ -82,6 +82,8 @@ class Client(object):
     def send_data(self, data=None):
         """
         Send the data to the server
+        :param data: The data to send to the server
+        :type data: String
         """
         self.socket.send(data)
 
