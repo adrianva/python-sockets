@@ -6,14 +6,37 @@ def prompt() :
     sys.stdout.flush()
 
 class Client(object):
+    """
+     Class for handle the Client side
+    """
 
-    def __init__(self, host , port):
+    def __init__(self, host=None, port=None):
+        """
+        Constructor of Client
+
+        :param host: ip of he Server
+        :type user: string
+        :param port: port of he Server
+        :type user: integer
+        """
         self.host = host
         self.port = port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.settimeout(2)
 
-    def connect(self):
+    def connect(self, host=None, port=None):
+        """
+        Connect to Server if the host or port is None use their own
+
+        :param host: ip of he Server
+        :type host: String
+        :param port: port of he Server
+        :type port: Integer
+        """
+
+        self.host = host if host else self.host
+        self.port = prot if prot else self.port
+
         try:
             self.socket.connect((self.host, self.port))
         except :
@@ -23,30 +46,38 @@ class Client(object):
         prompt()
 
     def ready(self):
+        """
+        execute the core of functionality it check if the client must send or recieve data
+        """
+
+        # list of the sockect avaliables
         socket_list = [sys.stdin, self.socket]
 
-        # Get the list sockets which are readable
         read_sockets, write_sockets, error_sockets = select.select(socket_list , [], [])
 
         for sock in read_sockets:
-            #incoming message from remote server
+            # if is the same socket it's mean it must read
             if sock == self.socket:
                 self.recieve_data()
-            #user entered a message
-            else :
+            else :  # in other case, writte
                self.send_data()
 
     def recieve_data(self):
+        """
+        Read the data for  the socket  and print it
+        """
         data = self.socket.recv(4096)
         if not data :
             print '\nDisconnected from chat server'
             sys.exit()
         else :
-            #print data
             sys.stdout.write(data)
             prompt()
 
     def send_data(self):
+        """
+        The User wirtte data and send it to the server
+        """
         msg = sys.stdin.readline()
         self.socket.send(msg)
         prompt()
