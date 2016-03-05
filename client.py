@@ -35,7 +35,7 @@ class Client(object):
         """
 
         self.host = host if host else self.host
-        self.port = prot if prot else self.port
+        self.port = port if port else self.port
 
         try:
             self.socket.connect((self.host, self.port))
