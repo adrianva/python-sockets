@@ -74,6 +74,7 @@ class Client(object):
             print '\nDisconnected from chat server'
             sys.exit()
         else :
+            print('data received {}'.format(data))
             return data
 
 

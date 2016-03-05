@@ -88,7 +88,7 @@ class Server():
         while keep_reading_data:
             data = sock.recv(self.RECV_BUFFER)
             if not data:
-                break
+                    break
             elif re.search("\n", data):
                 keep_reading_data = False
             total_data.append(data)
@@ -97,9 +97,6 @@ class Server():
 if __name__ == "__main__":
     server = Server()
     server.initialize_server_socket()
-
-    # Add server socket to the list of readable connections
-    server.connection_list.append(server.server_socket)
 
     print "Chat server started on port " + str(server.PORT)
 
