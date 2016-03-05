@@ -43,7 +43,6 @@ class Client(object):
             print 'Unable to connect'
             sys.exit()
         print 'Connected to remote host. Start sending messages'
-        prompt()
 
     def ready(self):
         """
@@ -59,8 +58,10 @@ class Client(object):
             # if is the same socket it's mean it must read
             if sock == self.socket:
                 data = self.recieve_data()
-                sys.stdout.write(data)
+
+                sys.stdout.write(data + '\n')
                 prompt()
+
             else:  # in other case, writte
                 msg = sys.stdin.readline()
                 self.send_data(msg)
@@ -74,7 +75,6 @@ class Client(object):
             print '\nDisconnected from chat server'
             sys.exit()
         else :
-            print('data received {}'.format(data))
             return data
 
 
