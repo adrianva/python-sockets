@@ -53,7 +53,7 @@ class Server():
         self.connection_list.append(sockfd)
         print "Client (%s, %s) connected" % addr
 
-        self.message_response(sockfd, "Entered room")
+        self.message_response(sockfd, "Entered room\n")
         return addr
 
     def handle_message_from_client(self, sock, addr=None):
@@ -72,9 +72,14 @@ class Server():
             self.message_response(sock, "Client is offline")
             self.remove_socket(sock)
 
-    def remove_socket(self, socket):
-        if socket in self.connection_list:
-            socket.close()
+    def remove_socket(self, sock):
+        """
+        Remove the socket from the connection list
+        :param sock: The socket to remove
+        :type sock: Socket
+        """
+        if sock in self.connection_list:
+            sock.close()
             self.connection_list.remove(sock)
 
     def __recvall(self, sock):

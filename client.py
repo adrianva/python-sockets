@@ -10,6 +10,8 @@ class Client(object):
     Class for handle the Client side
     """
 
+    RECV_BUFFER = 4096 # Advisable to keep it as an exponent of 2
+    
     def __init__(self, host=None, port=None):
         """
         Constructor of Client
@@ -46,10 +48,10 @@ class Client(object):
 
     def ready(self):
         """
-        Execute the core of functionality it check if the client must send or recieve data
+        Execute the core functionality. it checks if the client must send or recieve data
         """
 
-        # list of the sockect avaliables
+        # list of the available sockets
         socket_list = [sys.stdin, self.socket]
 
         read_sockets, write_sockets, error_sockets = select.select(socket_list , [], [])
@@ -57,39 +59,37 @@ class Client(object):
         for sock in read_sockets:
             # if is the same socket it's mean it must read
             if sock == self.socket:
-                data = self.recieve_data()
+                data = self.receive_data()
 
-                sys.stdout.write(data + '\n')
+                sys.stdout.write("<server response> " + data)
                 prompt()
-
-            else:  # in other case, writte
+            else:  # in other case, write
                 msg = sys.stdin.readline()
                 self.send_data(msg)
 
-    def recieve_data(self):
+    def receive_data(self):
         """
-        Read the data for  the socket  and print it
+        Read the data from the socket and print it
         """
-        data = self.socket.recv(4096)
-        if not data :
+        data = self.socket.recv(self.RECV_BUFFER)
+        if not data:
             print '\nDisconnected from chat server'
             sys.exit()
-        else :
+        else:
             return data
 
 
     def send_data(self, data=None):
         """
-        The User wirtte data and send it to the server
+        Send the data to the server
         """
         self.socket.send(data)
-        prompt()
 
 #main function
 if __name__ == "__main__":
 
     if(len(sys.argv) < 3) :
-        print 'Usage : python telnet.py hostname port'
+        print 'Usage : python client.py hostname port'
         sys.exit()
 
     host = sys.argv[1]
@@ -97,7 +97,6 @@ if __name__ == "__main__":
     client = Client(host, port)
 
     client.connect()
-
 
     while 1:
         client.ready()
