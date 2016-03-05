@@ -7,7 +7,7 @@ def prompt() :
 
 class Client(object):
     """
-     Class for handle the Client side
+    Class for handle the Client side
     """
 
     def __init__(self, host=None, port=None):
@@ -47,7 +47,7 @@ class Client(object):
 
     def ready(self):
         """
-        execute the core of functionality it check if the client must send or recieve data
+        Execute the core of functionality it check if the client must send or recieve data
         """
 
         # list of the sockect avaliables
@@ -58,9 +58,12 @@ class Client(object):
         for sock in read_sockets:
             # if is the same socket it's mean it must read
             if sock == self.socket:
-                self.recieve_data()
-            else :  # in other case, writte
-               self.send_data()
+                data = self.recieve_data()
+                sys.stdout.write(data)
+                prompt()
+            else:  # in other case, writte
+                msg = sys.stdin.readline()
+                self.send_data(msg)
 
     def recieve_data(self):
         """
@@ -71,15 +74,14 @@ class Client(object):
             print '\nDisconnected from chat server'
             sys.exit()
         else :
-            sys.stdout.write(data)
-            prompt()
+            return data
 
-    def send_data(self):
+
+    def send_data(self, data=None):
         """
         The User wirtte data and send it to the server
         """
-        msg = sys.stdin.readline()
-        self.socket.send(msg)
+        self.socket.send(data)
         prompt()
 
 #main function

@@ -1,8 +1,8 @@
 # Tcp Chat server
- 
+
 import socket, select
 
-RECV_BUFFER = 4096 # Advisable to keep it as an exponent of 2
+RECV_BUFFER = 512 # Advisable to keep it as an exponent of 2
 PORT = 5000
 
 class Server():
@@ -22,6 +22,7 @@ class Server():
         self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.server_socket.bind(("0.0.0.0", PORT))
         self.server_socket.listen(10)
+        self.connection_list.append(self.server_socket)
 
     def message_response (self, sock, message):
         """
@@ -36,9 +37,8 @@ class Server():
             sock.send(message)
         except :
             # broken socket connection may be, chat client pressed ctrl+c for example
-            sock.close()
-            print "Connection removed"
-            self.connection_list.remove(sock)
+            self.remove_socket(sock)
+
 
     def connect_new_client(self, sock):
         """
@@ -52,11 +52,11 @@ class Server():
         sockfd, addr = self.server_socket.accept()
         self.connection_list.append(sockfd)
         print "Client (%s, %s) connected" % addr
-         
-        self.message_response(sockfd, "[%s:%s] entered room\n" % addr)
+
+        self.message_response(sockfd, "Entered room")
         return addr
 
-    def handle_message_from_client(self, sock, addr):
+    def handle_message_from_client(self, sock, addr=None):
         """
         Send the message back to the client.
         If it is not possible disconnect the client by removing it from the connection list
@@ -66,26 +66,26 @@ class Server():
         try:
             data = sock.recv(RECV_BUFFER)
             if data:
-                self.message_response(sock, "\r" + '<' + str(sock.getpeername()) + '> ' + data)      
+                self.message_response(sock, data)
         except:
-            self.message_response(sock, "Client (%s, %s) is offline" % addr)
-            print "Client (%s, %s) is offline" % addr
-            sock.close()
-            self.connection_list.remove(sock) 
- 
+            self.message_response(sock, "Client is offline")
+            self.remove_socket(sock)
+
+    def remove_socket(self, socket):
+        if socket in self.connection_list:
+            socket.close()
+            self.connection_list.remove(sock)
+
 if __name__ == "__main__":
     server = Server()
     server.initialize_server_socket()
- 
-    # Add server socket to the list of readable connections
-    server.connection_list.append(server.server_socket)
- 
+
     print "Chat server started on port " + str(PORT)
- 
+
     while 1:
         # Get the list sockets which are ready to be read through select
         read_sockets,write_sockets,error_sockets = select.select(server.connection_list, [], [])
- 
+
         for sock in read_sockets:
             #New connection
             if sock == server.server_socket:
@@ -94,5 +94,5 @@ if __name__ == "__main__":
             else:
                 # Data recieved from client, process it
                 server.handle_message_from_client(sock, addr)
-     
+
     server.server_socket.close()
