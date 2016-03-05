@@ -1,14 +1,14 @@
-# Tcp Chat server
-
-import socket, select
-
-RECV_BUFFER = 512 # Advisable to keep it as an exponent of 2
-PORT = 5000
+import socket
+import select
+import re
 
 class Server():
     """
     Class for handle the server side
     """
+    RECV_BUFFER = 4096 # Advisable to keep it as an exponent of 2
+    PORT = 5000
+
     def __init__(self):
         self.server_socket = None
         self.connection_list = []
@@ -20,7 +20,7 @@ class Server():
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # this has no effect, why ?
         self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.server_socket.bind(("0.0.0.0", PORT))
+        self.server_socket.bind(("0.0.0.0", self.PORT))
         self.server_socket.listen(10)
         self.connection_list.append(self.server_socket)
 
@@ -64,7 +64,8 @@ class Server():
         :type sock: Socket
         """
         try:
-            data = sock.recv(RECV_BUFFER)
+            #data = sock.recv(RECV_BUFFER)
+            data = self.__recvall(sock)
             if data:
                 self.message_response(sock, data)
         except:
@@ -76,11 +77,31 @@ class Server():
             socket.close()
             self.connection_list.remove(sock)
 
+    def __recvall(self, sock):
+        """
+        Keep receiving all data from client until it's done or the client disconnects.
+        :param sock: The client socket who sends the data
+        :type sock: Socket
+        """
+        total_data=[]
+        keep_reading_data = True
+        while keep_reading_data:
+            data = sock.recv(self.RECV_BUFFER)
+            if not data:
+                break
+            elif re.search("\n", data):
+                keep_reading_data = False
+            total_data.append(data)
+        return ''.join(total_data)
+
 if __name__ == "__main__":
     server = Server()
     server.initialize_server_socket()
 
-    print "Chat server started on port " + str(PORT)
+    # Add server socket to the list of readable connections
+    server.connection_list.append(server.server_socket)
+
+    print "Chat server started on port " + str(server.PORT)
 
     while 1:
         # Get the list sockets which are ready to be read through select
