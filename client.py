@@ -30,14 +30,14 @@ class Client(object):
 
         for sock in read_sockets:
             #incoming message from remote server
-            if sock == s:
+            if sock == self.socket:
                 self.recieve_data()
             #user entered a message
             else :
                self.send_data()
 
     def recieve_data(self):
-        data = sock.recv(4096)
+        data = self.socket.recv(4096)
         if not data :
             print '\nDisconnected from chat server'
             sys.exit()
