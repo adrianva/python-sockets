@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+import sys
 import socket
 import select
 import re
@@ -17,14 +19,18 @@ class Server():
         """
         Initialize the server socket
         """
-        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # this has no effect, why ?
-        self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.server_socket.bind(("0.0.0.0", self.PORT))
-        self.server_socket.listen(10)
-        self.connection_list.append(self.server_socket)
+        try:
+            self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            # this has no effect, why ?
+            self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.server_socket.bind(("0.0.0.0", self.PORT))
+            self.server_socket.listen(10)
+            self.connection_list.append(self.server_socket)
+        except:
+            print "Could not initialize socket"
+            sys.exit()
 
-    def message_response (self, sock, message):
+    def send_message_response (self, sock, message):
         """
         Send the response to the client
         :param sock: Socket where the response goes
@@ -32,7 +38,6 @@ class Server():
         :para message: The message sent from the client
         :type message: string
         """
-        #Do not send the message to master socket and the client who has send us the message
         try :
             sock.send(message)
         except :
@@ -53,7 +58,7 @@ class Server():
         self.connection_list.append(sockfd)
         print "Client (%s, %s) connected" % addr
 
-        self.message_response(sockfd, "Entered room\n")
+        self.send_message_response(sockfd, "Entered room\n")
         return addr
 
     def handle_message_from_client(self, sock, addr=None):
@@ -67,9 +72,9 @@ class Server():
             #data = sock.recv(RECV_BUFFER)
             data = self.__recvall(sock)
             if data:
-                self.message_response(sock, data)
+                self.send_message_response(sock, data)
         except:
-            self.message_response(sock, "Client is offline")
+            self.send_message_response(sock, "Client is offline")
             self.remove_socket(sock)
 
     def remove_socket(self, sock):
@@ -106,14 +111,14 @@ if __name__ == "__main__":
     print "Chat server started on port " + str(server.PORT)
 
     while 1:
-        # Get the list sockets which are ready to be read through select
+        # Get the list of sockets which are ready to be read through select
         read_sockets,write_sockets,error_sockets = select.select(server.connection_list, [], [])
 
         for sock in read_sockets:
-            #New connection
+            # New connection
             if sock == server.server_socket:
                 addr = server.connect_new_client(sock)
-            #Some incoming message from a client
+            # Some incoming message from a client
             else:
                 # Data recieved from client, process it
                 server.handle_message_from_client(sock, addr)

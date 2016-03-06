@@ -1,5 +1,8 @@
-# telnet program example
-import socket, select, string, sys
+# -*- coding: utf-8 -*-
+import sys
+import socket 
+import select
+import string
 
 def prompt() :
     sys.stdout.write('<You> ')
@@ -41,7 +44,7 @@ class Client(object):
 
         try:
             self.socket.connect((self.host, self.port))
-        except :
+        except:
             print 'Unable to connect'
             sys.exit()
         print 'Connected to remote host. Start sending messages'
@@ -70,6 +73,8 @@ class Client(object):
     def receive_data(self):
         """
         Read the data from the socket and print it
+        :return data: Data sent by server
+        :type data: String
         """
         data = self.socket.recv(self.RECV_BUFFER)
         if not data:
