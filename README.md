@@ -1,6 +1,6 @@
 # python-sockets
-Pet project to play with sockets in Python
-You simply need to have installed Python 2.7 in order to run it
+Pet project to play with sockets in Python.
+You simply need to have installed Python 2.7 in order to run it.
 
 ## Server
 
@@ -31,4 +31,14 @@ Now you can begin sending messages to the server. They should be echoed back to 
 
 > \<server response> This is as test
 
+You should be able to start as many clients as you want (up to 10).
 
+### Unit Tests
+
+Some unit tests are included in order to ensure the basic funcionality.
+
+If you want to run `test_client.py' you need to start the server first (as it was mentioned above).
+
+- `python test_server.py`
+- Start the server
+- `python test_client.py` 
