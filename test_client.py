@@ -47,6 +47,19 @@ class TestClient(unittest.TestCase):
         response = client.receive_data()
         self.assertEqual(response, message)
 
+    def test_connect_two_clients(self):
+        client_1 = Client("localhost", 5000)
+        client_1.connect()
+
+        response = client_1.receive_data()
+        self.assertEqual(response, 'Entered room\n')
+
+        client_2 = Client("localhost", 5000)
+        client_2.connect()
+
+        response = client_2.receive_data()
+        self.assertEqual(response, 'Entered room\n')                
+
 
 if __name__ == '__main__':
     unittest.main()
