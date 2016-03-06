@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 import unittest
-import select
-import string
-import random
-
 from server import Server
 
 class TestServer(unittest.TestCase):

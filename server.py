@@ -77,7 +77,6 @@ class Server():
         :type sock: Socket
         """
         try:
-            #data = sock.recv(RECV_BUFFER)
             data = self.__recvall(sock)
             if data:
                 self.send_response_message(sock, data)

@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
-import select
 import string
 import random
-
 from client import Client
 
 class TestClient(unittest.TestCase):

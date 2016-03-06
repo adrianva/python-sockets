@@ -5,7 +5,7 @@ import socket
 import select
 import string
 
-def prompt() :
+def prompt():
     sys.stdout.write('<You> ')
     sys.stdout.flush()
 
@@ -61,7 +61,7 @@ class Client(object):
             read_sockets, write_sockets, error_sockets = select.select(socket_list , [], [])
 
             for sock in read_sockets:
-                # if is the same socket it's mean it must read
+                # if it is the same socket it means it must read
                 if sock == self.socket:
                     data = self.receive_data()
 
@@ -108,7 +108,7 @@ class Client(object):
         """
         self.socket.send(data)
 
-#main function
+
 if __name__ == "__main__":
 
     if(len(sys.argv) < 3) :
