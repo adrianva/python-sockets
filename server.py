@@ -21,7 +21,6 @@ class Server():
         """
         try:
             self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            # this has no effect, why ?
             self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.server_socket.bind(("0.0.0.0", self.PORT))
             self.server_socket.listen(10)
@@ -44,6 +43,15 @@ class Server():
             # broken socket connection may be, chat client pressed ctrl+c for example
             self.remove_socket(sock)
 
+    def remove_socket(self, sock):
+        """
+        Remove the socket from the connection list
+        :param sock: The socket to remove
+        :type sock: Socket
+        """
+        if sock in self.connection_list:
+            sock.close()
+            self.connection_list.remove(sock)
 
     def connect_new_client(self, sock):
         """
@@ -77,16 +85,6 @@ class Server():
             self.send_response_message(sock, "Client is offline")
             self.remove_socket(sock)
 
-    def remove_socket(self, sock):
-        """
-        Remove the socket from the connection list
-        :param sock: The socket to remove
-        :type sock: Socket
-        """
-        if sock in self.connection_list:
-            sock.close()
-            self.connection_list.remove(sock)
-
     def __recvall(self, sock):
         """
         Keep receiving all data from client until it's done or the client disconnects.
@@ -104,23 +102,32 @@ class Server():
             total_data.append(data)
         return ''.join(total_data)
 
+
+    def run_server(self):
+        """
+        Keep running the server, listening to new connections from clients
+        and/or sending them the messages.
+        """
+        while 1:
+            # Get the list of sockets which are ready to be read through select
+            read_sockets,write_sockets,error_sockets = select.select(self.connection_list, [], [])
+
+            for sock in read_sockets:
+                # New connection
+                if sock == self.server_socket:
+                    addr = self.connect_new_client(sock)
+                # Some incoming message from a client
+                else:
+                    # Data recieved from client, process it
+                    self.handle_message_from_client(sock, addr)
+
+        self.server_socket.close()
+
+
 if __name__ == "__main__":
     server = Server()
     server.initialize_server_socket()
 
     print "Chat server started on port " + str(server.PORT)
 
-    while 1:
-        # Get the list of sockets which are ready to be read through select
-        read_sockets,write_sockets,error_sockets = select.select(server.connection_list, [], [])
-
-        for sock in read_sockets:
-            # New connection
-            if sock == server.server_socket:
-                addr = server.connect_new_client(sock)
-            # Some incoming message from a client
-            else:
-                # Data recieved from client, process it
-                server.handle_message_from_client(sock, addr)
-
-    server.server_socket.close()
+    server.run_server()

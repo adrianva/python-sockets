@@ -32,6 +32,7 @@ class TestClient(unittest.TestCase):
         self.assertEqual(response, message)
 
     def test_send_long_message_to_server(self):
+        # Generate some random text larger than 4096 bytes
         characters = (string.ascii_uppercase +
                       string.digits + ' ')
         message = ''.join(random.choice(characters) for x in range(6000))
