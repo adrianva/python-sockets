@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import re
 import socket 
 import select
 import string
@@ -76,13 +77,28 @@ class Client(object):
         :return data: Data sent by server
         :type data: String
         """
-        data = self.socket.recv(self.RECV_BUFFER)
+        #data = self.socket.recv(self.RECV_BUFFER)
+        data = self.__recvall()
         if not data:
             print '\nDisconnected from chat server'
             sys.exit()
         else:
             return data
 
+    def __recvall(self):
+        """
+        Keep receiving all data from the server until it's done.
+        """
+        total_data=[]
+        keep_reading_data = True
+        while keep_reading_data:
+            data = self.socket.recv(self.RECV_BUFFER)
+            if not data:
+                    break
+            elif re.search("\n", data):
+                keep_reading_data = False
+            total_data.append(data)
+        return ''.join(total_data)
 
     def send_data(self, data=None):
         """

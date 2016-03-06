@@ -30,7 +30,7 @@ class Server():
             print "Could not initialize socket"
             sys.exit()
 
-    def send_message_response (self, sock, message):
+    def send_response_message(self, sock, message):
         """
         Send the response to the client
         :param sock: Socket where the response goes
@@ -58,7 +58,7 @@ class Server():
         self.connection_list.append(sockfd)
         print "Client (%s, %s) connected" % addr
 
-        self.send_message_response(sockfd, "Entered room\n")
+        self.send_response_message(sockfd, "Entered room\n")
         return addr
 
     def handle_message_from_client(self, sock, addr=None):
@@ -72,9 +72,9 @@ class Server():
             #data = sock.recv(RECV_BUFFER)
             data = self.__recvall(sock)
             if data:
-                self.send_message_response(sock, data)
+                self.send_response_message(sock, data)
         except:
-            self.send_message_response(sock, "Client is offline")
+            self.send_response_message(sock, "Client is offline")
             self.remove_socket(sock)
 
     def remove_socket(self, sock):

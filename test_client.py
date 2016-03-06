@@ -18,7 +18,7 @@ class TestClient(unittest.TestCase):
         self.assertEqual(self.client.host, client_aux.host)
         self.assertEqual(self.client.port, client_aux.port)
 
-    def test_send_short_message_server(self):
+    def test_send_short_message_to_server(self):
         print "testing short messages delivery...\n"
         client = Client("localhost", 5000)
         client.connect()
@@ -31,7 +31,7 @@ class TestClient(unittest.TestCase):
         response = client.receive_data()
         self.assertEqual(response, message)
 
-    def test_send_long_test_server(self):
+    def test_send_long_message_to_server(self):
         characters = (string.ascii_uppercase +
                       string.digits + ' ')
         message = ''.join(random.choice(characters) for x in range(6000))
