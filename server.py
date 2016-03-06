@@ -24,6 +24,7 @@ class Server():
             self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.server_socket.bind(("0.0.0.0", self.PORT))
             self.server_socket.listen(10)
+            # Insert the server socket to the connection list
             self.connection_list.append(self.server_socket)
         except:
             print "Could not initialize socket"
@@ -40,7 +41,7 @@ class Server():
         try:
             sock.send(message)
         except:
-            # broken socket connection may be, chat client pressed ctrl+c for example
+            # broken socket connection may be due to client pressing ctrl+c for example
             self.remove_socket(sock)
 
     def remove_socket(self, sock):
