@@ -77,7 +77,6 @@ class Client(object):
         :return data: Data sent by server
         :type data: String
         """
-        #data = self.socket.recv(self.RECV_BUFFER)
         data = self.__recvall()
         if not data:
             print '\nDisconnected from chat server'
