@@ -37,9 +37,9 @@ class Server():
         :para message: The message sent from the client
         :type message: string
         """
-        try :
+        try:
             sock.send(message)
-        except :
+        except:
             # broken socket connection may be, chat client pressed ctrl+c for example
             self.remove_socket(sock)
 
