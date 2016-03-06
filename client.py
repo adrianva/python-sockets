@@ -54,22 +54,22 @@ class Client(object):
         """
         Execute the core functionality. Send or receive the message to/from the server
         """
+        while 1:
+            # list of the available sockets
+            socket_list = [sys.stdin, self.socket]
 
-        # list of the available sockets
-        socket_list = [sys.stdin, self.socket]
+            read_sockets, write_sockets, error_sockets = select.select(socket_list , [], [])
 
-        read_sockets, write_sockets, error_sockets = select.select(socket_list , [], [])
+            for sock in read_sockets:
+                # if is the same socket it's mean it must read
+                if sock == self.socket:
+                    data = self.receive_data()
 
-        for sock in read_sockets:
-            # if is the same socket it's mean it must read
-            if sock == self.socket:
-                data = self.receive_data()
-
-                sys.stdout.write("<server response> " + data)
-                prompt()
-            else:  # in other case, write
-                msg = sys.stdin.readline()
-                self.send_data(msg)
+                    sys.stdout.write("<server response> " + data)
+                    prompt()
+                else:  # in other case, write
+                    msg = sys.stdin.readline()
+                    self.send_data(msg)
 
     def receive_data(self):
         """
@@ -120,6 +120,4 @@ if __name__ == "__main__":
     client = Client(host, port)
 
     client.connect()
-
-    while 1:
-        client.ready()
+    client.ready()

@@ -69,7 +69,7 @@ class Server():
         self.send_response_message(sockfd, "Entered room\n")
         return addr
 
-    def handle_message_from_client(self, sock, addr=None):
+    def handle_message_from_client(self, sock):
         """
         Send the message back to the client.
         If it is not possible disconnect the client by removing it from the connection list
@@ -115,11 +115,11 @@ class Server():
             for sock in read_sockets:
                 # New connection
                 if sock == self.server_socket:
-                    addr = self.connect_new_client(sock)
+                    self.connect_new_client(sock)
                 # Some incoming message from a client
                 else:
                     # Data recieved from client, process it
-                    self.handle_message_from_client(sock, addr)
+                    self.handle_message_from_client(sock)
 
         self.server_socket.close()
 
